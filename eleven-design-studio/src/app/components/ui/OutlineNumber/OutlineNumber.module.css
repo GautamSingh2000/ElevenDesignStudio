@@ -1,0 +1,52 @@
+/*
+ * OutlineNumber — step size is the global --fs-step-num (theme.css).
+ * Point size — 1920 value from reference 04-about (full-page.html).
+ * Frames: 1440 = 0.75× and 1280 = 0.667× of 1920 (theme.css rule), 430 = mobile value,
+ * 768 = on the line between 1280 and 430. Every tier is a chained clamp.
+ *   point size  1920 28 → 1440 21 → 1280 18.67 → 768 18.27 → 430 18 (12px floor below 430)
+ * Stroke widths are hairlines and stay static.
+ */
+.outline-number {
+  /* ── > 1440 · 1440 → 1920 ── */
+  --outline-number-point-size: clamp(1.3125rem, calc(28 / 1920 * 100vw), 1.75rem); /* 21→28 */
+
+  display: block;
+  font: var(--text-step-num); /* fs-step-num, line-height 1 */
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--color-gold);
+}
+
+/* About points — reference uses a slightly finer stroke at 28px */
+.outline-number--point {
+  flex: none;
+  font-size: var(--outline-number-point-size);
+  -webkit-text-stroke-width: 1.2px;
+}
+
+/* ── ≤ 1440 · 1280 → 1440 ── */
+@media (max-width: 1440px) {
+  .outline-number {
+    --outline-number-point-size: clamp(1.1669rem, calc(21 / 1440 * 100vw), 1.3125rem); /* 18.67→21 */
+  }
+}
+
+/* ── ≤ 1280 · 768 → 1280 ── */
+@media (max-width: 1280px) {
+  .outline-number {
+    --outline-number-point-size: clamp(1.1419rem, calc(18.67 / 1280 * 100vw), 1.1669rem); /* 18.27→18.67 */
+  }
+}
+
+/* ── ≤ 768 (tablet) · 430 → 768 ── */
+@media (max-width: 768px) {
+  .outline-number {
+    --outline-number-point-size: clamp(1.125rem, calc(18.27 / 768 * 100vw), 1.1419rem); /* 18→18.27 */
+  }
+}
+
+/* ── ≤ 430 (mobile) · floor → 430 ── */
+@media (max-width: 430px) {
+  .outline-number {
+    --outline-number-point-size: clamp(var(--size-12px), calc(18 / 430 * 100vw), 1.125rem); /* 12 floor→18 */
+  }
+}

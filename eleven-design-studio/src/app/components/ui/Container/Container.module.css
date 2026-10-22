@@ -1,0 +1,12 @@
+/*
+ * Container — padding-inline is the global 5-tier --gutter (theme.css):
+ *   430 16px → 768 32px → 1280 53.33px → 1440 60px → 1920 80px
+ * max-width is the static --container-max (1600px), so no local fluid tokens.
+ */
+.container {
+  /* Full width even inside flex parents, where auto margins would shrink-wrap it */
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}

@@ -1,28 +1,29 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { Anton, Instrument_Serif, Poppins } from 'next/font/google';
 import '@/styles/theme.css';
 import './globals.css';
 
-const anton = Anton({ subsets: ['latin'], weight: '400', display: 'swap' });
+// theme.css maps these to --font-display / --font-accent / --font-body.
+const anton = Anton({
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+  variable: '--next-font-anton',
+});
 const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
   weight: '400',
   style: ['normal', 'italic'],
   display: 'swap',
+  variable: '--next-font-instrument-serif',
 });
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
+  variable: '--next-font-poppins',
 });
-
-// Inline style beats the :root fallbacks in theme.css regardless of stylesheet order.
-const fontVars = {
-  '--font-display': anton.style.fontFamily,
-  '--font-accent': instrumentSerif.style.fontFamily,
-  '--font-body': poppins.style.fontFamily,
-} as CSSProperties;
 
 export const metadata: Metadata = {
   title: 'Eleven Design Studio',
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" style={fontVars}>
+    <html lang="en" className={`${anton.variable} ${instrumentSerif.variable} ${poppins.variable}`}>
       <body>{children}</body>
     </html>
   );

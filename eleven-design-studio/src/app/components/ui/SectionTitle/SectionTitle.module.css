@@ -1,0 +1,31 @@
+/*
+ * SectionTitle — reference 05-services heading / 02-hero H1.
+ * Every size is a global 5-tier token (theme.css), so no local fluid tokens:
+ *   --text-h2             fs-h2             430 44px → 768 64px → 1280 69.33px → 1440 78px → 1920 104px
+ *   --text-h2-accent      fs-h2-accent      430 52px → 768 72px → 1280 77.33px → 1440 87px → 1920 116px
+ *   --text-display        fs-display        430 56px → 768 88px → 1280 106.67px → 1440 120px → 1920 160px
+ *   --text-display-accent fs-display-accent 430 64px → 768 96px → 1280 117.33px → 1440 132px → 1920 176px
+ */
+.section-title {
+  margin: 0;
+  font: var(--text-h2); /* line-height 0.95 */
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.section-title__accent {
+  font: var(--text-h2-accent);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-gold);
+}
+
+/* Hero H1 — line-height 0.92 + display tracking (reference 02-hero) */
+.section-title--display {
+  font: var(--text-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.section-title--display .section-title__accent {
+  font: var(--text-display-accent);
+}

@@ -1,0 +1,61 @@
+/*
+ * IconTile — 1920 values from reference 05-services / 02-hero feature card (full-page.html).
+ * Frames: 1440 = 0.75× and 1280 = 0.667× of 1920 (theme.css rule), 430 = mobile value,
+ * 768 = on the line between 1280 and 430. Every tier is a chained clamp.
+ *   radius  1920 18 → 1440 13.5 → 1280 12 → 768 10.8 → 430 10
+ *   icon    1920 26 → 1440 19.5 → 1280 17.33 → 768 16.53 → 430 16
+ * Tile box is the global --icon-tile (theme.css).
+ */
+.icon-tile {
+  /* ── > 1440 · 1440 → 1920 ── */
+  --icon-tile-radius: clamp(0.8438rem, calc(18 / 1920 * 100vw), 1.125rem); /* 13.5→18 */
+  --icon-tile-icon-size: clamp(1.2188rem, calc(26 / 1920 * 100vw), 1.625rem); /* 19.5→26 */
+
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-tile);
+  height: var(--icon-tile);
+  border-radius: var(--icon-tile-radius);
+  background: var(--gradient-gold-tile);
+  box-shadow: var(--shadow-tile);
+  color: var(--color-ink);
+}
+
+.icon-tile__icon {
+  width: var(--icon-tile-icon-size);
+  height: var(--icon-tile-icon-size);
+}
+
+/* ── ≤ 1440 · 1280 → 1440 ── */
+@media (max-width: 1440px) {
+  .icon-tile {
+    --icon-tile-radius: clamp(0.75rem, calc(13.5 / 1440 * 100vw), 0.8438rem); /* 12→13.5 */
+    --icon-tile-icon-size: clamp(1.0831rem, calc(19.5 / 1440 * 100vw), 1.2188rem); /* 17.33→19.5 */
+  }
+}
+
+/* ── ≤ 1280 · 768 → 1280 ── */
+@media (max-width: 1280px) {
+  .icon-tile {
+    --icon-tile-radius: clamp(0.675rem, calc(12 / 1280 * 100vw), 0.75rem); /* 10.8→12 */
+    --icon-tile-icon-size: clamp(1.0331rem, calc(17.33 / 1280 * 100vw), 1.0831rem); /* 16.53→17.33 */
+  }
+}
+
+/* ── ≤ 768 (tablet) · 430 → 768 ── */
+@media (max-width: 768px) {
+  .icon-tile {
+    --icon-tile-radius: clamp(0.625rem, calc(10.8 / 768 * 100vw), 0.675rem); /* 10→10.8 */
+    --icon-tile-icon-size: clamp(1rem, calc(16.53 / 768 * 100vw), 1.0331rem); /* 16→16.53 */
+  }
+}
+
+/* ── ≤ 430 (mobile) · 0 → 430 ── */
+@media (max-width: 430px) {
+  .icon-tile {
+    --icon-tile-radius: clamp(0rem, calc(10 / 430 * 100vw), 0.625rem); /* 0→10 */
+    --icon-tile-icon-size: clamp(0rem, calc(16 / 430 * 100vw), 1rem); /* 0→16 */
+  }
+}

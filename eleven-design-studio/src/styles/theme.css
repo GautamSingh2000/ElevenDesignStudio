@@ -1,177 +1,359 @@
 /* =====================================================================
    Eleven Design Studio — theme.css  (V2 · Midnight Gold Glass)
    ---------------------------------------------------------------------
-   Tiers
-     desktop  : base styles (design canvas 1920, content max 1600)
-     ≤1440px  : laptop  — structure only (sizes come from the desktop clamp)
-     ≤1280px  : small laptop — structure only
-     ≤768px   : tablet  — chained clamps, vw / 768
-     ≤430px   : mobile  — chained clamps, vw / 430
-   Chained clamp rule
-     desktop  clamp(<tablet>, <px/1920*100>vw, <web>)
-     tablet   clamp(<mobile>, <px/768*100>vw,  <tablet>)
-     mobile   clamp(<floor>,  <px/430*100>vw,  <mobile>)   (only where needed)
-   Every min <= max, every tier's min == next tier's max  → no jumps.
-   .fluid-responsive (images) uses design canvases 1920 / 834 / 402.
+   Every fluid token is re-assigned at every breakpoint. Each range scales
+   from its lower frame to its upper frame:
+     > 1440        1440 → 1920   (freezes above 1920)
+     ≤ 1440        1280 → 1440
+     ≤ 1280         768 → 1280
+     ≤  768 (tab)   430 →  768
+     ≤  430 (mob)     0 →  430
+   Middle value: calc(<upper-frame px> / <upper-frame width> * 100vw).
+   Min of each range = the value of the next frame down → no jumps.
+   Frame values: 1920 = design; 1440 / 1280 = 0.75× / 0.667× of 1920
+   (never below the 768 value); 768 = tablet design; 430 = mobile design.
    ===================================================================== */
 
+/* ── Colors ─────────────────────────────────────────────── */
 :root {
-  /* ---------- colour ---------- */
-  --color-bg: #0B0E2A;               /* Midnight — page */
-  --color-bg-alt: #070920;           /* Abyss — alternate sections, footer */
-  --color-navy: #283480;             /* Studio Navy — glows, brand */
-  --color-navy-900: #1A1F52;
-  --color-gold: #F9BE4A;             /* Sun Gold — accent, CTAs */
-  --color-gold-hi: #FFD27A;
-  --color-gold-lo: #E9A21F;
-  --color-ink: #14173A;              /* text on gold */
-  --color-white: #FFFFFF;
-  --color-text-lead: #C9CCE6;
-  --color-text-muted: #B8BCE0;
-  --color-text-soft: #E3E5F5;
-  --color-placeholder: #8C91C2;
+  --color-bg: #0b0e2a; /* Midnight — page */
+  --color-bg-alt: #070920; /* Abyss — alternate sections, footer */
+  --color-navy: #283480; /* Studio Navy — glows, brand */
+  --color-navy-900: #1a1f52;
+  --color-gold: #f9be4a; /* Sun Gold — accent, CTAs */
+  --color-gold-hi: #ffd27a;
+  --color-gold-lo: #e9a21f;
+  --color-ink: #14173a; /* text on gold */
+  --color-white: #ffffff;
+  --color-text-lead: #c9cce6;
+  --color-text-muted: #b8bce0;
+  --color-text-soft: #e3e5f5;
+  --color-placeholder: #8c91c2;
+}
 
-  /* ---------- glass / gradients / shadows ---------- */
+/* ── Glass / gradients / shadows ────────────────────────── */
+:root {
   --glass-fill: rgba(255, 255, 255, 0.06);
-  --glass-fill-strong: rgba(255, 255, 255, 0.10);
+  --glass-fill-strong: rgba(255, 255, 255, 0.1);
   --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-border-strong: rgba(255, 255, 255, 0.20);
+  --glass-border-strong: rgba(255, 255, 255, 0.2);
   --glass-blur: blur(18px);
-  --gradient-gold: linear-gradient(135deg, #FFD27A 0%, #F9BE4A 50%, #E9A21F 100%);
-  --gradient-gold-tile: linear-gradient(145deg, #FFD27A, #E9A21F);
-  --gradient-gold-card: linear-gradient(155deg, #FFD27A 0%, #F9BE4A 45%, #E9A21F 100%);
+
+  --gradient-gold: linear-gradient(135deg, #ffd27a 0%, #f9be4a 50%, #e9a21f 100%); /* CTAs */
+  --gradient-gold-tile: linear-gradient(145deg, #ffd27a, #e9a21f); /* 3D icon tiles */
+  --gradient-gold-card: linear-gradient(155deg, #ffd27a 0%, #f9be4a 45%, #e9a21f 100%); /* featured card */
   --gradient-card: linear-gradient(160deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
   --gradient-navy-band: linear-gradient(120deg, rgba(40, 52, 128, 0.72), rgba(40, 52, 128, 0.25));
-  --gradient-hero-overlay: linear-gradient(90deg, #0B0E2A 0%, rgba(11, 14, 42, 0.92) 32%, rgba(11, 14, 42, 0.55) 62%, rgba(11, 14, 42, 0.25) 100%);
-  --gradient-fade-bottom: linear-gradient(180deg, rgba(11, 14, 42, 0) 0%, #0B0E2A 100%);
+  --gradient-hero-overlay: linear-gradient(90deg, #0b0e2a 0%, rgba(11, 14, 42, 0.92) 32%, rgba(11, 14, 42, 0.55) 62%, rgba(11, 14, 42, 0.25) 100%);
+  --gradient-fade-bottom: linear-gradient(180deg, rgba(11, 14, 42, 0) 0%, #0b0e2a 100%);
   --gradient-photo-caption: linear-gradient(180deg, rgba(11, 14, 42, 0) 50%, rgba(11, 14, 42, 0.85) 100%);
-  --gradient-marquee: linear-gradient(90deg, #E9A21F, #F9BE4A, #FFD27A);
+  --gradient-marquee: linear-gradient(90deg, #e9a21f, #f9be4a, #ffd27a);
   --glow-navy: radial-gradient(circle, rgba(40, 52, 128, 0.65) 0%, rgba(40, 52, 128, 0) 70%);
   --glow-gold: radial-gradient(circle, rgba(249, 190, 74, 0.5) 0%, rgba(249, 190, 74, 0) 70%);
+
   --shadow-gold: 0 12px 36px rgba(249, 190, 74, 0.35);
   --shadow-deep: 0 30px 60px rgba(0, 0, 0, 0.35);
   --shadow-tile: inset 0 2px 0 rgba(255, 255, 255, 0.55), inset 0 -4px 10px rgba(160, 100, 0, 0.35), 0 14px 28px rgba(249, 190, 74, 0.28);
+}
 
-  /* ---------- font families ---------- */
-  --font-display: 'Anton', sans-serif;
-  --font-accent: 'Instrument Serif', serif;
-  --font-body: 'Poppins', system-ui, sans-serif;
+/* ── Font Families ──────────────────────────────────────── */
+/* --next-font-* are generated by next/font in layout.tsx */
+:root {
+  --font-display: var(--next-font-anton, 'Anton'), sans-serif;
+  --font-accent: var(--next-font-instrument-serif, 'Instrument Serif'), serif;
+  --font-body: var(--next-font-poppins, 'Poppins'), system-ui, sans-serif;
+}
 
-  /* ---------- global scale: spacing ---------- */
-  --space-4px: 0.25rem;
-  --space-6px: 0.375rem;
-  --space-8px: 0.5rem;
-  --space-10px: 0.625rem;
-  --space-12px: 0.75rem;
-  --space-14px: 0.875rem;
-  --space-16px: 1rem;
-  --space-18px: 1.125rem;
-  --space-20px: 1.25rem;
-  --space-24px: 1.5rem;
-  --space-28px: 1.75rem;
-  --space-32px: 2rem;
-  --space-40px: 2.5rem;
-  --space-48px: 3rem;
-  --space-56px: 3.5rem;
-  --space-64px: 4rem;
-  --space-72px: 4.5rem;
-  --space-80px: 5rem;
-  --space-96px: 6rem;
-  --space-128px: 8rem;
+/* ── Scale Variables (static) ───────────────────────────── */
+:root {
+  --space-0px: 0rem; /* 0px */
+  --space-4px: 0.25rem; /* 4px */
+  --space-6px: 0.375rem; /* 6px */
+  --space-8px: 0.5rem; /* 8px */
+  --space-10px: 0.625rem; /* 10px */
+  --space-12px: 0.75rem; /* 12px */
+  --space-14px: 0.875rem; /* 14px */
+  --space-16px: 1rem; /* 16px */
+  --space-18px: 1.125rem; /* 18px */
+  --space-20px: 1.25rem; /* 20px */
+  --space-24px: 1.5rem; /* 24px */
+  --space-28px: 1.75rem; /* 28px */
+  --space-32px: 2rem; /* 32px */
+  --space-40px: 2.5rem; /* 40px */
+  --space-48px: 3rem; /* 48px */
+  --space-56px: 3.5rem; /* 56px */
+  --space-64px: 4rem; /* 64px */
+  --space-72px: 4.5rem; /* 72px */
+  --space-80px: 5rem; /* 80px */
+  --space-96px: 6rem; /* 96px */
+  --space-128px: 8rem; /* 128px */
 
-  /* ---------- global scale: sizes ---------- */
-  --size-11px: 0.6875rem;
-  --size-12px: 0.75rem;
-  --size-13px: 0.8125rem;
-  --size-14px: 0.875rem;
-  --size-15px: 0.9375rem;
-  --size-16px: 1rem;
-  --size-18px: 1.125rem;
-  --size-20px: 1.25rem;
-  --size-22px: 1.375rem;
-  --size-24px: 1.5rem;
-  --size-28px: 1.75rem;
-  --size-30px: 1.875rem;
-  --size-34px: 2.125rem;
-  --size-38px: 2.375rem;
-  --size-40px: 2.5rem;
-  --size-44px: 2.75rem;
-  --size-48px: 3rem;
-  --size-50px: 3.125rem;
-  --size-52px: 3.25rem;
-  --size-56px: 3.5rem;
-  --size-60px: 3.75rem;
-  --size-64px: 4rem;
-  --size-72px: 4.5rem;
-  --size-80px: 5rem;
-  --size-88px: 5.5rem;
-  --size-96px: 6rem;
-  --size-104px: 6.5rem;
-  --size-116px: 7.25rem;
-  --size-120px: 7.5rem;
-  --size-160px: 10rem;
-  --size-176px: 11rem;
-  --size-200px: 12.5rem;
-  --size-220px: 13.75rem;
-  --size-240px: 15rem;
-  --size-280px: 17.5rem;
-  --size-300px: 18.75rem;
-  --size-370px: 23.125rem;
-  --size-380px: 23.75rem;
-  --size-560px: 35rem;
-  --size-720px: 45rem;
-  --size-760px: 47.5rem;
-  --size-820px: 51.25rem;
-  --size-960px: 60rem;
-  --size-1600px: 100rem;
+  --size-1px: 0.0625rem; /* 1px — glass borders */
+  --size-2px: 0.125rem; /* 2px — eyebrow rule */
+  --size-11px: 0.6875rem; /* 11px */
+  --size-12px: 0.75rem; /* 12px */
+  --size-13px: 0.8125rem; /* 13px */
+  --size-14px: 0.875rem; /* 14px — input radius */
+  --size-16px: 1rem; /* 16px — inputs font */
+  --size-18px: 1.125rem; /* 18px — icon tile radius */
+  --size-20px: 1.25rem; /* 20px — icons */
+  --size-22px: 1.375rem; /* 22px — card lead */
+  --size-24px: 1.5rem; /* 24px */
+  --size-28px: 1.75rem; /* 28px — point numbers, menu items */
+  --size-36px: 2.25rem; /* 36px — eyebrow rule width, arrow circles */
+  --size-40px: 2.5rem; /* 40px — faint card numbers */
+  --size-44px: 2.75rem; /* 44px — touch targets, logo height */
+  --size-46px: 2.875rem; /* 46px — social buttons */
+  --size-48px: 3rem; /* 48px — slider buttons */
+  --size-52px: 3.25rem; /* 52px — footer logo */
+  --size-280px: 17.5rem; /* 280px — mobile carousel card */
+  --size-360px: 22.5rem; /* 360px — hero aside */
+  --size-370px: 23.125rem; /* 370px — mobile portfolio slide */
+  --size-1200px: 75rem; /* 1200px — hero copy max */
+  --size-1600px: 100rem; /* 1600px — container max */
+  --size-full: 62.4375rem; /* 999px — pill */
 
-  --radius-pill: 999px;
-  --radius-sm: var(--space-14px);
+  --radius-pill: var(--size-full);
+  --radius-sm: var(--size-14px);
   --container-max: var(--size-1600px);
 
-  /* ================= FLUID TOKENS — desktop (vw / 1920) ================= */
-  /* type */
-  --fs-display: clamp(var(--size-88px), 8.3333vw, var(--size-160px));          /* tab 88 -> web 160 */
-  --fs-display-accent: clamp(var(--size-96px), 9.1667vw, var(--size-176px));   /* tab 96 -> web 176 */
-  --fs-h2: clamp(var(--size-64px), 5.4167vw, var(--size-104px));               /* tab 64 -> web 104 */
-  --fs-h2-accent: clamp(var(--size-72px), 6.0417vw, var(--size-116px));        /* tab 72 -> web 116 */
-  --fs-quote: clamp(var(--size-40px), 3.125vw, var(--size-60px));              /* tab 40 -> web 60 */
-  --fs-stat: clamp(var(--size-56px), 4.1667vw, var(--size-80px));              /* tab 56 -> web 80 */
-  --fs-step-num: clamp(var(--size-60px), 4.1667vw, var(--size-80px));          /* tab 60 -> web 80 */
-  --fs-card-h: clamp(var(--size-30px), 2.0833vw, var(--size-40px));            /* tab 30 -> web 40 */
-  --fs-footer-giant: clamp(var(--size-120px), 10.4167vw, var(--size-200px));   /* tab 120 -> web 200 */
-  --fs-marquee: clamp(var(--size-24px), 1.7708vw, var(--size-34px));           /* tab 24 -> web 34 */
-  --fs-lead: clamp(var(--size-18px), 1.1458vw, var(--size-22px));              /* tab 18 -> web 22 */
-  --fs-card-title: clamp(var(--size-18px), 1.1458vw, var(--size-22px));        /* tab 18 -> web 22 */
-  --fs-body: clamp(var(--size-16px), 0.9375vw, var(--size-18px));              /* tab 16 -> web 18 */
-  --fs-small: clamp(var(--size-14px), 0.7813vw, var(--size-15px));             /* tab 14 -> web 15 */
-  --fs-eyebrow: clamp(var(--size-12px), 0.7292vw, var(--size-14px));           /* tab 12 -> web 14 */
+  --alpha-8: 0.08;
+  --alpha-35: 0.35;
+}
 
-  /* spacing */
-  --gutter: clamp(var(--space-32px), 4.1667vw, var(--space-80px));             /* tab 32 -> web 80 */
-  --section-py: clamp(var(--space-72px), 6.6667vw, var(--space-128px));        /* tab 72 -> web 128 */
-  --gap-xl: clamp(var(--space-48px), 4.1667vw, var(--space-80px));             /* tab 48 -> web 80 */
-  --gap-lg: clamp(var(--space-32px), 2.9167vw, var(--space-56px));             /* tab 32 -> web 56 */
-  --gap-md: clamp(var(--space-16px), 1.25vw, var(--space-24px));               /* tab 16 -> web 24 */
-  --card-pad: clamp(var(--space-24px), 1.6667vw, var(--space-32px));           /* tab 24 -> web 32 */
-  --panel-pad: clamp(var(--space-32px), 3.3333vw, var(--space-64px));          /* tab 32 -> web 64 */
-  --radius-card: clamp(var(--size-22px), 1.4583vw, var(--size-28px));          /* tab 22 -> web 28 */
-  --radius-panel: clamp(var(--size-30px), 2.2917vw, var(--size-44px));         /* tab 30 -> web 44 */
+/* ── Fluid tokens (re-assigned at every breakpoint) ─────── */
+/* > 1440 · range 1440 → 1920 (freezes above 1920) */
+:root {
+  /* Type */
+  --fs-display: clamp(7.5rem, calc(160 / 1920 * 100vw), 10rem); /* 120→160 — hero H1 (Anton) */
+  --fs-display-accent: clamp(8.25rem, calc(176 / 1920 * 100vw), 11rem); /* 132→176 — hero accent word (Instrument Serif) */
+  --fs-h2: clamp(4.875rem, calc(104 / 1920 * 100vw), 6.5rem); /* 78→104 — section titles */
+  --fs-h2-accent: clamp(5.4375rem, calc(116 / 1920 * 100vw), 7.25rem); /* 87→116 — section title accent word */
+  --fs-quote: clamp(2.8125rem, calc(60 / 1920 * 100vw), 3.75rem); /* 45→60 — commitment quote */
+  --fs-stat: clamp(3.75rem, calc(80 / 1920 * 100vw), 5rem); /* 60→80 — 22+, 10, 06 */
+  --fs-step-num: clamp(3.75rem, calc(80 / 1920 * 100vw), 5rem); /* 60→80 — outlined step numbers */
+  --fs-card-h: clamp(1.875rem, calc(40 / 1920 * 100vw), 2.5rem); /* 30→40 — commitment card titles */
+  --fs-footer-giant: clamp(9.375rem, calc(200 / 1920 * 100vw), 12.5rem); /* 150→200 — ELEVEN 11 */
+  --fs-marquee: clamp(1.5938rem, calc(34 / 1920 * 100vw), 2.125rem); /* 25.5→34 — gold strip words */
+  --fs-lead: clamp(1.125rem, calc(22 / 1920 * 100vw), 1.375rem); /* 18→22 — hero lead */
+  --fs-card-title: clamp(1.125rem, calc(22 / 1920 * 100vw), 1.375rem); /* 18→22 — card / point titles */
+  --fs-body: clamp(1rem, calc(18 / 1920 * 100vw), 1.125rem); /* 16→18 — paragraphs, buttons */
+  --fs-small: clamp(0.875rem, calc(15 / 1920 * 100vw), 0.9375rem); /* 14→15 — card text, nav, captions */
+  --fs-eyebrow: clamp(0.75rem, calc(14 / 1920 * 100vw), 0.875rem); /* 12→14 — eyebrow labels */
 
-  /* element sizes */
-  --hero-min-h: clamp(var(--size-820px), 50vw, var(--size-960px));             /* tab 820 -> web 960 */
-  --about-img-h: clamp(var(--size-380px), 29.1667vw, var(--size-560px));       /* tab 380 -> web 560 */
-  --process-img-h: clamp(var(--size-300px), 19.7917vw, var(--size-380px));     /* tab 300 -> web 380 */
-  --work-row-h: clamp(var(--size-240px), 15.625vw, var(--size-300px));         /* tab 240 -> web 300 */
-  --icon-tile: clamp(var(--size-52px), 3.125vw, var(--size-60px));             /* tab 52 -> web 60 */
+  /* Spacing */
+  --gutter: clamp(3.75rem, calc(80 / 1920 * 100vw), 5rem); /* 60→80 — container padding-inline */
+  --section-py: clamp(6rem, calc(128 / 1920 * 100vw), 8rem); /* 96→128 — section padding-block */
+  --gap-xl: clamp(3.75rem, calc(80 / 1920 * 100vw), 5rem); /* 60→80 — between large blocks */
+  --gap-lg: clamp(2.625rem, calc(56 / 1920 * 100vw), 3.5rem); /* 42→56 — between heading and content */
+  --gap-md: clamp(1.125rem, calc(24 / 1920 * 100vw), 1.5rem); /* 18→24 — grid gaps */
+  --card-pad: clamp(1.5rem, calc(32 / 1920 * 100vw), 2rem); /* 24→32 — card padding */
+  --panel-pad: clamp(3rem, calc(64 / 1920 * 100vw), 4rem); /* 48→64 — contact panel padding */
+  --radius-card: clamp(1.375rem, calc(28 / 1920 * 100vw), 1.75rem); /* 22→28 — card radius */
+  --radius-panel: clamp(2.0625rem, calc(44 / 1920 * 100vw), 2.75rem); /* 33→44 — panel / large image radius */
 
-  /* ================= STRUCTURE TOKENS (switched in media queries) ================= */
+  /* Element sizes */
+  --hero-min-h: clamp(51.25rem, calc(960 / 1920 * 100vw), 60rem); /* 820→960 — hero min-height */
+  --about-img-h: clamp(26.25rem, calc(560 / 1920 * 100vw), 35rem); /* 420→560 — about image height */
+  --process-img-h: clamp(18.75rem, calc(380 / 1920 * 100vw), 23.75rem); /* 300→380 — process image height */
+  --work-row-h: clamp(15rem, calc(300 / 1920 * 100vw), 18.75rem); /* 240→300 — portfolio grid row */
+  --icon-tile: clamp(3.25rem, calc(60 / 1920 * 100vw), 3.75rem); /* 52→60 — gold 3D icon tile */
+}
+
+/* ≤ 1440 · range 1280 → 1440 */
+@media (max-width: 1440px) {
+  :root {
+    /* Type */
+    --fs-display: clamp(6.6667rem, calc(120 / 1440 * 100vw), 7.5rem); /* 106.67→120 — hero H1 (Anton) */
+    --fs-display-accent: clamp(7.3333rem, calc(132 / 1440 * 100vw), 8.25rem); /* 117.33→132 — hero accent word (Instrument Serif) */
+    --fs-h2: clamp(4.3333rem, calc(78 / 1440 * 100vw), 4.875rem); /* 69.33→78 — section titles */
+    --fs-h2-accent: clamp(4.8333rem, calc(87 / 1440 * 100vw), 5.4375rem); /* 77.33→87 — section title accent word */
+    --fs-quote: clamp(2.5rem, calc(45 / 1440 * 100vw), 2.8125rem); /* 40→45 — commitment quote */
+    --fs-stat: clamp(3.5rem, calc(60 / 1440 * 100vw), 3.75rem); /* 56→60 — 22+, 10, 06 */
+    --fs-step-num: clamp(3.75rem, calc(60 / 1440 * 100vw), 3.75rem); /* 60→60 — outlined step numbers */
+    --fs-card-h: clamp(1.875rem, calc(30 / 1440 * 100vw), 1.875rem); /* 30→30 — commitment card titles */
+    --fs-footer-giant: clamp(8.3333rem, calc(150 / 1440 * 100vw), 9.375rem); /* 133.33→150 — ELEVEN 11 */
+    --fs-marquee: clamp(1.5rem, calc(25.5 / 1440 * 100vw), 1.5938rem); /* 24→25.5 — gold strip words */
+    --fs-lead: clamp(1.125rem, calc(18 / 1440 * 100vw), 1.125rem); /* 18→18 — hero lead */
+    --fs-card-title: clamp(1.125rem, calc(18 / 1440 * 100vw), 1.125rem); /* 18→18 — card / point titles */
+    --fs-body: clamp(1rem, calc(16 / 1440 * 100vw), 1rem); /* 16→16 — paragraphs, buttons */
+    --fs-small: clamp(0.875rem, calc(14 / 1440 * 100vw), 0.875rem); /* 14→14 — card text, nav, captions */
+    --fs-eyebrow: clamp(0.75rem, calc(12 / 1440 * 100vw), 0.75rem); /* 12→12 — eyebrow labels */
+
+    /* Spacing */
+    --gutter: clamp(3.3333rem, calc(60 / 1440 * 100vw), 3.75rem); /* 53.33→60 — container padding-inline */
+    --section-py: clamp(5.3333rem, calc(96 / 1440 * 100vw), 6rem); /* 85.33→96 — section padding-block */
+    --gap-xl: clamp(3.3333rem, calc(60 / 1440 * 100vw), 3.75rem); /* 53.33→60 — between large blocks */
+    --gap-lg: clamp(2.3333rem, calc(42 / 1440 * 100vw), 2.625rem); /* 37.33→42 — between heading and content */
+    --gap-md: clamp(1rem, calc(18 / 1440 * 100vw), 1.125rem); /* 16→18 — grid gaps */
+    --card-pad: clamp(1.5rem, calc(24 / 1440 * 100vw), 1.5rem); /* 24→24 — card padding */
+    --panel-pad: clamp(2.6667rem, calc(48 / 1440 * 100vw), 3rem); /* 42.67→48 — contact panel padding */
+    --radius-card: clamp(1.375rem, calc(22 / 1440 * 100vw), 1.375rem); /* 22→22 — card radius */
+    --radius-panel: clamp(1.875rem, calc(33 / 1440 * 100vw), 2.0625rem); /* 30→33 — panel / large image radius */
+
+    /* Element sizes */
+    --hero-min-h: clamp(51.25rem, calc(820 / 1440 * 100vw), 51.25rem); /* 820→820 — hero min-height */
+    --about-img-h: clamp(23.75rem, calc(420 / 1440 * 100vw), 26.25rem); /* 380→420 — about image height */
+    --process-img-h: clamp(18.75rem, calc(300 / 1440 * 100vw), 18.75rem); /* 300→300 — process image height */
+    --work-row-h: clamp(15rem, calc(240 / 1440 * 100vw), 15rem); /* 240→240 — portfolio grid row */
+    --icon-tile: clamp(3.25rem, calc(52 / 1440 * 100vw), 3.25rem); /* 52→52 — gold 3D icon tile */
+  }
+}
+
+/* ≤ 1280 · range 768 → 1280 */
+@media (max-width: 1280px) {
+  :root {
+    /* Type */
+    --fs-display: clamp(5.5rem, calc(106.67 / 1280 * 100vw), 6.6667rem); /* 88→106.67 — hero H1 (Anton) */
+    --fs-display-accent: clamp(6rem, calc(117.33 / 1280 * 100vw), 7.3333rem); /* 96→117.33 — hero accent word (Instrument Serif) */
+    --fs-h2: clamp(4rem, calc(69.33 / 1280 * 100vw), 4.3333rem); /* 64→69.33 — section titles */
+    --fs-h2-accent: clamp(4.5rem, calc(77.33 / 1280 * 100vw), 4.8333rem); /* 72→77.33 — section title accent word */
+    --fs-quote: clamp(2.5rem, calc(40 / 1280 * 100vw), 2.5rem); /* 40→40 — commitment quote */
+    --fs-stat: clamp(3.5rem, calc(56 / 1280 * 100vw), 3.5rem); /* 56→56 — 22+, 10, 06 */
+    --fs-step-num: clamp(3.75rem, calc(60 / 1280 * 100vw), 3.75rem); /* 60→60 — outlined step numbers */
+    --fs-card-h: clamp(1.875rem, calc(30 / 1280 * 100vw), 1.875rem); /* 30→30 — commitment card titles */
+    --fs-footer-giant: clamp(7.5rem, calc(133.33 / 1280 * 100vw), 8.3333rem); /* 120→133.33 — ELEVEN 11 */
+    --fs-marquee: clamp(1.5rem, calc(24 / 1280 * 100vw), 1.5rem); /* 24→24 — gold strip words */
+    --fs-lead: clamp(1.125rem, calc(18 / 1280 * 100vw), 1.125rem); /* 18→18 — hero lead */
+    --fs-card-title: clamp(1.125rem, calc(18 / 1280 * 100vw), 1.125rem); /* 18→18 — card / point titles */
+    --fs-body: clamp(1rem, calc(16 / 1280 * 100vw), 1rem); /* 16→16 — paragraphs, buttons */
+    --fs-small: clamp(0.875rem, calc(14 / 1280 * 100vw), 0.875rem); /* 14→14 — card text, nav, captions */
+    --fs-eyebrow: clamp(0.75rem, calc(12 / 1280 * 100vw), 0.75rem); /* 12→12 — eyebrow labels */
+
+    /* Spacing */
+    --gutter: clamp(2rem, calc(53.33 / 1280 * 100vw), 3.3333rem); /* 32→53.33 — container padding-inline */
+    --section-py: clamp(4.5rem, calc(85.33 / 1280 * 100vw), 5.3333rem); /* 72→85.33 — section padding-block */
+    --gap-xl: clamp(3rem, calc(53.33 / 1280 * 100vw), 3.3333rem); /* 48→53.33 — between large blocks */
+    --gap-lg: clamp(2rem, calc(37.33 / 1280 * 100vw), 2.3333rem); /* 32→37.33 — between heading and content */
+    --gap-md: clamp(1rem, calc(16 / 1280 * 100vw), 1rem); /* 16→16 — grid gaps */
+    --card-pad: clamp(1.5rem, calc(24 / 1280 * 100vw), 1.5rem); /* 24→24 — card padding */
+    --panel-pad: clamp(2rem, calc(42.67 / 1280 * 100vw), 2.6667rem); /* 32→42.67 — contact panel padding */
+    --radius-card: clamp(1.375rem, calc(22 / 1280 * 100vw), 1.375rem); /* 22→22 — card radius */
+    --radius-panel: clamp(1.875rem, calc(30 / 1280 * 100vw), 1.875rem); /* 30→30 — panel / large image radius */
+
+    /* Element sizes */
+    --hero-min-h: clamp(51.25rem, calc(820 / 1280 * 100vw), 51.25rem); /* 820→820 — hero min-height */
+    --about-img-h: clamp(23.75rem, calc(380 / 1280 * 100vw), 23.75rem); /* 380→380 — about image height */
+    --process-img-h: clamp(18.75rem, calc(300 / 1280 * 100vw), 18.75rem); /* 300→300 — process image height */
+    --work-row-h: clamp(15rem, calc(240 / 1280 * 100vw), 15rem); /* 240→240 — portfolio grid row */
+    --icon-tile: clamp(3.25rem, calc(52 / 1280 * 100vw), 3.25rem); /* 52→52 — gold 3D icon tile */
+  }
+}
+
+/* ≤ 768 (tablet) · range 430 → 768 */
+@media (max-width: 768px) {
+  :root {
+    /* Type */
+    --fs-display: clamp(3.5rem, calc(88 / 768 * 100vw), 5.5rem); /* 56→88 — hero H1 (Anton) */
+    --fs-display-accent: clamp(4rem, calc(96 / 768 * 100vw), 6rem); /* 64→96 — hero accent word (Instrument Serif) */
+    --fs-h2: clamp(2.75rem, calc(64 / 768 * 100vw), 4rem); /* 44→64 — section titles */
+    --fs-h2-accent: clamp(3.25rem, calc(72 / 768 * 100vw), 4.5rem); /* 52→72 — section title accent word */
+    --fs-quote: clamp(1.875rem, calc(40 / 768 * 100vw), 2.5rem); /* 30→40 — commitment quote */
+    --fs-stat: clamp(2.5rem, calc(56 / 768 * 100vw), 3.5rem); /* 40→56 — 22+, 10, 06 */
+    --fs-step-num: clamp(3.125rem, calc(60 / 768 * 100vw), 3.75rem); /* 50→60 — outlined step numbers */
+    --fs-card-h: clamp(1.5rem, calc(30 / 768 * 100vw), 1.875rem); /* 24→30 — commitment card titles */
+    --fs-footer-giant: clamp(5rem, calc(120 / 768 * 100vw), 7.5rem); /* 80→120 — ELEVEN 11 */
+    --fs-marquee: clamp(1.25rem, calc(24 / 768 * 100vw), 1.5rem); /* 20→24 — gold strip words */
+    --fs-lead: clamp(1rem, calc(18 / 768 * 100vw), 1.125rem); /* 16→18 — hero lead */
+    --fs-card-title: clamp(0.9375rem, calc(18 / 768 * 100vw), 1.125rem); /* 15→18 — card / point titles */
+    --fs-body: clamp(0.9375rem, calc(16 / 768 * 100vw), 1rem); /* 15→16 — paragraphs, buttons */
+    --fs-small: clamp(0.8125rem, calc(14 / 768 * 100vw), 0.875rem); /* 13→14 — card text, nav, captions */
+    --fs-eyebrow: clamp(0.6875rem, calc(12 / 768 * 100vw), 0.75rem); /* 11→12 — eyebrow labels */
+
+    /* Spacing */
+    --gutter: clamp(1rem, calc(32 / 768 * 100vw), 2rem); /* 16→32 — container padding-inline */
+    --section-py: clamp(3.5rem, calc(72 / 768 * 100vw), 4.5rem); /* 56→72 — section padding-block */
+    --gap-xl: clamp(1.75rem, calc(48 / 768 * 100vw), 3rem); /* 28→48 — between large blocks */
+    --gap-lg: clamp(1.25rem, calc(32 / 768 * 100vw), 2rem); /* 20→32 — between heading and content */
+    --gap-md: clamp(0.75rem, calc(16 / 768 * 100vw), 1rem); /* 12→16 — grid gaps */
+    --card-pad: clamp(1.125rem, calc(24 / 768 * 100vw), 1.5rem); /* 18→24 — card padding */
+    --panel-pad: clamp(1.125rem, calc(32 / 768 * 100vw), 2rem); /* 18→32 — contact panel padding */
+    --radius-card: clamp(1.25rem, calc(22 / 768 * 100vw), 1.375rem); /* 20→22 — card radius */
+    --radius-panel: clamp(1.75rem, calc(30 / 768 * 100vw), 1.875rem); /* 28→30 — panel / large image radius */
+
+    /* Element sizes */
+    --hero-min-h: clamp(47.5rem, calc(820 / 768 * 100vw), 51.25rem); /* 760→820 — hero min-height */
+    --about-img-h: clamp(13.75rem, calc(380 / 768 * 100vw), 23.75rem); /* 220→380 — about image height */
+    --process-img-h: clamp(13.75rem, calc(300 / 768 * 100vw), 18.75rem); /* 220→300 — process image height */
+    --work-row-h: clamp(13.75rem, calc(240 / 768 * 100vw), 15rem); /* 220→240 — portfolio grid row */
+    --icon-tile: clamp(2.75rem, calc(52 / 768 * 100vw), 3.25rem); /* 44→52 — gold 3D icon tile */
+  }
+}
+
+/* ≤ 430 (mobile) · range 0 → 430 */
+@media (max-width: 430px) {
+  :root {
+    /* Type */
+    --fs-display: clamp(0rem, calc(56 / 430 * 100vw), 3.5rem); /* 0→56 — hero H1 (Anton) */
+    --fs-display-accent: clamp(0rem, calc(64 / 430 * 100vw), 4rem); /* 0→64 — hero accent word (Instrument Serif) */
+    --fs-h2: clamp(0rem, calc(44 / 430 * 100vw), 2.75rem); /* 0→44 — section titles */
+    --fs-h2-accent: clamp(0rem, calc(52 / 430 * 100vw), 3.25rem); /* 0→52 — section title accent word */
+    --fs-quote: clamp(0rem, calc(30 / 430 * 100vw), 1.875rem); /* 0→30 — commitment quote */
+    --fs-stat: clamp(0rem, calc(40 / 430 * 100vw), 2.5rem); /* 0→40 — 22+, 10, 06 */
+    --fs-step-num: clamp(0rem, calc(50 / 430 * 100vw), 3.125rem); /* 0→50 — outlined step numbers */
+    --fs-card-h: clamp(0rem, calc(24 / 430 * 100vw), 1.5rem); /* 0→24 — commitment card titles */
+    --fs-footer-giant: clamp(0rem, calc(80 / 430 * 100vw), 5rem); /* 0→80 — ELEVEN 11 */
+    --fs-marquee: clamp(0rem, calc(20 / 430 * 100vw), 1.25rem); /* 0→20 — gold strip words */
+    --fs-lead: clamp(0rem, calc(16 / 430 * 100vw), 1rem); /* 0→16 — hero lead */
+    --fs-card-title: clamp(0rem, calc(15 / 430 * 100vw), 0.9375rem); /* 0→15 — card / point titles */
+    --fs-body: clamp(0rem, calc(15 / 430 * 100vw), 0.9375rem); /* 0→15 — paragraphs, buttons */
+    --fs-small: clamp(0rem, calc(13 / 430 * 100vw), 0.8125rem); /* 0→13 — card text, nav, captions */
+    --fs-eyebrow: clamp(0rem, calc(11 / 430 * 100vw), 0.6875rem); /* 0→11 — eyebrow labels */
+
+    /* Spacing */
+    --gutter: clamp(0rem, calc(16 / 430 * 100vw), 1rem); /* 0→16 — container padding-inline */
+    --section-py: clamp(0rem, calc(56 / 430 * 100vw), 3.5rem); /* 0→56 — section padding-block */
+    --gap-xl: clamp(0rem, calc(28 / 430 * 100vw), 1.75rem); /* 0→28 — between large blocks */
+    --gap-lg: clamp(0rem, calc(20 / 430 * 100vw), 1.25rem); /* 0→20 — between heading and content */
+    --gap-md: clamp(0rem, calc(12 / 430 * 100vw), 0.75rem); /* 0→12 — grid gaps */
+    --card-pad: clamp(0rem, calc(18 / 430 * 100vw), 1.125rem); /* 0→18 — card padding */
+    --panel-pad: clamp(0rem, calc(18 / 430 * 100vw), 1.125rem); /* 0→18 — contact panel padding */
+    --radius-card: clamp(0rem, calc(20 / 430 * 100vw), 1.25rem); /* 0→20 — card radius */
+    --radius-panel: clamp(0rem, calc(28 / 430 * 100vw), 1.75rem); /* 0→28 — panel / large image radius */
+
+    /* Element sizes */
+    --hero-min-h: clamp(0rem, calc(760 / 430 * 100vw), 47.5rem); /* 0→760 — hero min-height */
+    --about-img-h: clamp(0rem, calc(220 / 430 * 100vw), 13.75rem); /* 0→220 — about image height */
+    --process-img-h: clamp(0rem, calc(220 / 430 * 100vw), 13.75rem); /* 0→220 — process image height */
+    --work-row-h: clamp(0rem, calc(220 / 430 * 100vw), 13.75rem); /* 0→220 — portfolio grid row */
+    --icon-tile: clamp(0rem, calc(44 / 430 * 100vw), 2.75rem); /* 0→44 — gold 3D icon tile */
+  }
+}
+
+/* ── Font Shorthand Tokens ──────────────────────────────── */
+:root {
+  --text-display: normal 400 var(--fs-display) / 0.92 var(--font-display); /* uppercase */
+  --text-display-accent: italic 400 var(--fs-display-accent) / 0.92 var(--font-accent);
+  --text-h2: normal 400 var(--fs-h2) / 0.95 var(--font-display); /* uppercase */
+  --text-h2-accent: italic 400 var(--fs-h2-accent) / 0.95 var(--font-accent);
+  --text-quote: normal 400 var(--fs-quote) / 1.18 var(--font-accent);
+  --text-stat: normal 400 var(--fs-stat) / 1 var(--font-display);
+  --text-step-num: normal 400 var(--fs-step-num) / 1 var(--font-display); /* outline */
+  --text-card-h: normal 400 var(--fs-card-h) / 1.1 var(--font-display); /* uppercase */
+  --text-footer-giant: normal 400 var(--fs-footer-giant) / 0.85 var(--font-display);
+  --text-marquee: normal 400 var(--fs-marquee) / 1 var(--font-display);
+  --text-lead: normal 300 var(--fs-lead) / 1.7 var(--font-body);
+  --text-card-title: normal 600 var(--fs-card-title) / 1.3 var(--font-body);
+  --text-body: normal 400 var(--fs-body) / 1.75 var(--font-body);
+  --text-body-light: normal 300 var(--fs-body) / 1.8 var(--font-body);
+  --text-button: normal 600 var(--fs-body) / 1 var(--font-body);
+  --text-small: normal 400 var(--fs-small) / 1.6 var(--font-body);
+  --text-nav: normal 500 var(--fs-small) / 1 var(--font-body);
+  --text-eyebrow: normal 600 var(--fs-eyebrow) / 1 var(--font-body); /* uppercase */
+
+  --tracking-eyebrow: 0.28em; /* ≈ 4px at 14px */
+  --tracking-display: 0.01em;
+  --tracking-marquee: 0.06em;
+}
+
+/* ── Structure tokens (layout switches only) ────────────── */
+:root {
   --nav-display: flex;
   --burger-display: none;
   --hero-aside-display: flex;
   --hero-dots-display: none;
-  --split-dir: row;                  /* about / process head / contact */
-  --split-basis: 0%;                 /* equal halves in a row; auto when stacked */
+  --split-dir: row; /* about / process head / contact */
+  --split-basis: 0%; /* equal halves in a row; auto when stacked */
   --stats-cols: 4;
   --services-cols: 5;
   --process-display: grid;
@@ -182,7 +364,7 @@
   --work-display: grid;
   --work-cols: 4;
   --carousel-overflow: visible;
-  --carousel-item: none;             /* flex shorthand; ignored by grid */
+  --carousel-item: none; /* flex shorthand; ignored by grid */
   --work-item-h: auto;
   --form-cols: 2;
   --footer-cols: 1.4fr 1fr 1fr 1fr;
@@ -190,55 +372,14 @@
   --tabs-wrap: wrap;
 }
 
-/* ---------- ≤1440 laptop: sizes already scale via vw/1920 ---------- */
-@media (max-width: 1440px) {
-  :root {
-    --container-max: var(--size-1600px);
-  }
-}
-
-/* ---------- ≤1280 small laptop ---------- */
 @media (max-width: 1280px) {
   :root {
     --services-cols: 4;
   }
 }
 
-/* ---------- ≤768 tablet (vw / 768) ---------- */
 @media (max-width: 768px) {
   :root {
-    --fs-display: clamp(var(--size-56px), 11.4583vw, var(--size-88px));        /* mob 56 -> tab 88 */
-    --fs-display-accent: clamp(var(--size-64px), 12.5vw, var(--size-96px));    /* mob 64 -> tab 96 */
-    --fs-h2: clamp(var(--size-44px), 8.3333vw, var(--size-64px));              /* mob 44 -> tab 64 */
-    --fs-h2-accent: clamp(var(--size-52px), 9.375vw, var(--size-72px));        /* mob 52 -> tab 72 */
-    --fs-quote: clamp(var(--size-30px), 5.2083vw, var(--size-40px));           /* mob 30 -> tab 40 */
-    --fs-stat: clamp(var(--size-40px), 7.2917vw, var(--size-56px));            /* mob 40 -> tab 56 */
-    --fs-step-num: clamp(var(--size-50px), 7.8125vw, var(--size-60px));        /* mob 50 -> tab 60 */
-    --fs-card-h: clamp(var(--size-24px), 3.9063vw, var(--size-30px));          /* mob 24 -> tab 30 */
-    --fs-footer-giant: clamp(var(--size-80px), 15.625vw, var(--size-120px));   /* mob 80 -> tab 120 */
-    --fs-marquee: clamp(var(--size-20px), 3.125vw, var(--size-24px));          /* mob 20 -> tab 24 */
-    --fs-lead: clamp(var(--size-16px), 2.3438vw, var(--size-18px));            /* mob 16 -> tab 18 */
-    --fs-card-title: clamp(var(--size-15px), 2.3438vw, var(--size-18px));      /* mob 15 -> tab 18 */
-    --fs-body: clamp(var(--size-15px), 2.0833vw, var(--size-16px));            /* mob 15 -> tab 16 */
-    --fs-small: clamp(var(--size-13px), 1.8229vw, var(--size-14px));           /* mob 13 -> tab 14 */
-    --fs-eyebrow: clamp(var(--size-11px), 1.5625vw, var(--size-12px));         /* mob 11 -> tab 12 */
-
-    --gutter: clamp(var(--space-16px), 4.1667vw, var(--space-32px));           /* mob 16 -> tab 32 */
-    --section-py: clamp(var(--space-56px), 9.375vw, var(--space-72px));        /* mob 56 -> tab 72 */
-    --gap-xl: clamp(var(--space-28px), 6.25vw, var(--space-48px));             /* mob 28 -> tab 48 */
-    --gap-lg: clamp(var(--space-20px), 4.1667vw, var(--space-32px));           /* mob 20 -> tab 32 */
-    --gap-md: clamp(var(--space-12px), 2.0833vw, var(--space-16px));           /* mob 12 -> tab 16 */
-    --card-pad: clamp(var(--space-18px), 3.125vw, var(--space-24px));          /* mob 18 -> tab 24 */
-    --panel-pad: clamp(var(--space-18px), 4.1667vw, var(--space-32px));        /* mob 18 -> tab 32 */
-    --radius-card: clamp(var(--size-20px), 2.8646vw, var(--size-22px));        /* mob 20 -> tab 22 */
-    --radius-panel: clamp(var(--size-28px), 3.9063vw, var(--size-30px));       /* mob 28 -> tab 30 */
-
-    --hero-min-h: clamp(var(--size-760px), 106.7708vw, var(--size-820px));     /* mob 760 -> tab 820 */
-    --about-img-h: clamp(var(--size-220px), 49.4792vw, var(--size-380px));     /* mob 220 -> tab 380 */
-    --process-img-h: clamp(var(--size-220px), 39.0625vw, var(--size-300px));   /* mob 220 -> tab 300 */
-    --work-row-h: clamp(var(--size-220px), 31.25vw, var(--size-240px));        /* mob 220 -> tab 240 */
-    --icon-tile: clamp(var(--size-44px), 6.7708vw, var(--size-52px));          /* mob 44 -> tab 52 */
-
     --nav-display: none;
     --burger-display: flex;
     --hero-aside-display: none;
@@ -256,18 +397,9 @@
   }
 }
 
-/* ---------- ≤430 mobile (vw / 430) ---------- */
 @media (max-width: 430px) {
   :root {
-    /* big type keeps shrinking below 430 so 360–390 phones don't overflow */
-    --fs-display: clamp(var(--size-44px), 13.0233vw, var(--size-56px));        /* floor 44 -> mob 56 */
-    --fs-display-accent: clamp(var(--size-50px), 14.8837vw, var(--size-64px)); /* floor 50 -> mob 64 */
-    --fs-h2: clamp(var(--size-38px), 10.2326vw, var(--size-44px));             /* floor 38 -> mob 44 */
-    --fs-h2-accent: clamp(var(--size-44px), 12.093vw, var(--size-52px));       /* floor 44 -> mob 52 */
-    --fs-footer-giant: clamp(var(--size-72px), 18.6047vw, var(--size-80px));   /* floor 72 -> mob 80 */
-
-    /* carousels (structural hard switch — work card is taller as a slide) */
-    --process-display: flex;
+    --process-display: flex; /* carousels */
     --commit-display: flex;
     --work-display: flex;
     --carousel-overflow: auto;
@@ -278,12 +410,36 @@
   }
 }
 
-/* ---------- base + motion ---------- */
-body { margin: 0; background: var(--color-bg); }
-input::placeholder, textarea::placeholder { color: var(--color-placeholder); }
-@keyframes e11-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@keyframes e11-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+/* ── Base + motion ──────────────────────────────────────── */
+body {
+  margin: 0;
+  background: var(--color-bg);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-placeholder);
+}
+@keyframes e11-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes e11-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}
 
-/* ---------- images: design canvases 1920 / 834 / 402 ---------- */
-.fluid-responsive { width: min(100%, calc(var(--w) * 1px)); height: auto; }
+/* ── Global classes ─────────────────────────────────────── */
+/* Usage: <img class="fluid-responsive" style="--w: 600"> → 600px at 1920 */
+.fluid-responsive {
+  width: min(calc(var(--w) * 1px), calc(var(--w) / 1920 * 100vw)); /* scales below 1920, freezes above */
+}
+
+/* Mobile — 430 frames */
+@media (max-width: 430px) {
+  .fluid-responsive {
+    width: min(calc(var(--w) * 1px), 100%);
+  }
+}

@@ -1,0 +1,23 @@
+/*
+ * GlassCard — reference 06-process steps / 07-commitment cards.
+ * Every size is a global 5-tier token (theme.css), so no local fluid tokens:
+ *   padding --card-pad      430 18px → 768 24px → 1280 24px → 1440 24px → 1920 32px
+ *   radius  --radius-card   430 20px → 768 22px → 1280 22px → 1440 22px → 1920 28px
+ * Border is a hairline (--size-1px).
+ */
+.glass-card {
+  box-sizing: border-box;
+  padding: var(--card-pad);
+  border: var(--size-1px) solid var(--glass-border);
+  border-radius: var(--radius-card);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--color-white);
+}
+
+.glass-card--gold {
+  border-color: rgba(255, 255, 255, 0.4); /* reference: white 40% rim on the gold card */
+  background: var(--gradient-gold-card);
+  color: var(--color-ink);
+}

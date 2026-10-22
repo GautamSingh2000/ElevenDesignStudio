@@ -1,0 +1,66 @@
+/* Temporary playground layout */
+.playground {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  padding-block: var(--section-py);
+  background: var(--color-bg-alt);
+}
+
+.playground__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16px);
+}
+
+.playground__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-18px);
+}
+
+.playground__label {
+  margin: 0;
+  font: var(--text-small);
+  color: var(--color-text-muted);
+}
+
+.playground__box {
+  padding: var(--space-16px);
+  border: 1px dashed var(--glass-border-strong);
+  font: var(--text-small);
+  color: var(--color-text-lead);
+}
+
+.playground__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-14px);
+}
+
+.playground__cards {
+  display: grid;
+  grid-template-columns: repeat(var(--process-cols), minmax(0, 1fr));
+  gap: var(--gap-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.playground__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12px);
+}
+
+.playground__card-title {
+  margin: 0;
+  font: var(--text-card-title);
+}
+
+.playground__card-text {
+  margin: 0;
+  font: var(--text-small);
+  opacity: 0.85;
+}
