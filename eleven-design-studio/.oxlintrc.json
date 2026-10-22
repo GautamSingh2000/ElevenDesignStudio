@@ -1,8 +1,9 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "oxc"],
+  "plugins": ["react", "nextjs", "typescript", "jsx-a11y", "oxc"],
+  "ignorePatterns": [".next", "handoff", "next-env.d.ts"],
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+    "react/only-export-components": ["warn", { "allowConstantExport": true, "allowExportNames": ["metadata", "generateMetadata", "viewport", "generateViewport", "dynamic", "revalidate"] }]
   }
 }

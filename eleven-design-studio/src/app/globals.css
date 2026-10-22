@@ -1,0 +1,60 @@
+/* Base resets not covered by theme.css. Tokens only. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-gold);
+}
+a:hover {
+  color: var(--color-gold-hi);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Sticky header offset for anchor jumps */
+main > section {
+  scroll-margin-top: 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
