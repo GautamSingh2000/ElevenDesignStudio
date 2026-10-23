@@ -16,6 +16,13 @@
   color: var(--color-white);
 }
 
+/* Hero stat card (02-hero): stronger fill + rim, deep shadow */
+.glass-card--strong {
+  border-color: var(--glass-border-strong);
+  background: var(--glass-fill-strong);
+  box-shadow: var(--shadow-deep);
+}
+
 .glass-card--gold {
   border-color: rgba(255, 255, 255, 0.4); /* reference: white 40% rim on the gold card */
   background: var(--gradient-gold-card);

@@ -1,0 +1,346 @@
+/*
+ * Hero — reference 02-hero--1920/1440/768/430 + eleven-design-studio-v2-responsive.html.
+ * Type, padding and gaps are global 5-tier tokens (--fs-*, --text-*, --section-py, --gutter,
+ * --gap-*, --card-pad, --radius-card, --hero-min-h), so the section scales without local clamps.
+ * The aside is desktop-only and fixed at 360px in every desktop frame (PNG), so its
+ * internals use plain tokens. Decorative sizes (glow, ring) are fixed like the reference:
+ *   glow  560 × 560 at left −180, top 120   ring  220 × 220 at right −40, top −90
+ *   lead max-width 620 · CTA max-width 324 (reference 260 content + 2×32 padding)
+ * ≤ 768: --hero-aside-display hides the aside, --hero-dots-display shows the dots.
+ */
+.hero {
+  --hero-size-560px: 35rem; /* 560px — navy glow */
+  --hero-space-180px: 11.25rem; /* 180px — glow offset left */
+  --hero-space-120px: 7.5rem; /* 120px — glow offset top */
+  --hero-size-220px: 13.75rem; /* 220px — gold ring */
+  --hero-space-90px: 5.625rem; /* 90px — ring offset top */
+  --hero-size-620px: 38.75rem; /* 620px — lead max-width */
+  --hero-size-324px: 20.25rem; /* 324px — CTA max-width */
+  --hero-size-6px: 0.375rem; /* 6px — slider dot (reference 5, rounded up) */
+  --hero-ring-color: color-mix(in srgb, var(--color-gold) 60%, transparent);
+  --hero-ring-glow: color-mix(in srgb, var(--color-gold) 25%, transparent);
+  --hero-badge-fill: color-mix(in srgb, var(--color-gold) 15%, transparent);
+  --hero-dot-fill: color-mix(in srgb, var(--color-white) 30%, transparent);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--hero-min-h); /* 760 → 820 → 820 → 820 → 960 */
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* ── Background layers ── */
+.hero__image {
+  object-fit: cover;
+}
+
+.hero__overlay,
+.hero__fade,
+.hero__glow {
+  position: absolute;
+  pointer-events: none;
+}
+
+.hero__overlay {
+  inset: 0;
+  background: var(--gradient-hero-overlay);
+}
+
+.hero__fade {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 40%;
+  background: var(--gradient-fade-bottom);
+}
+
+.hero__glow {
+  top: var(--hero-space-120px);
+  left: calc(-1 * var(--hero-space-180px));
+  width: var(--hero-size-560px);
+  height: var(--hero-size-560px);
+  border-radius: var(--radius-pill);
+  background: var(--glow-navy);
+}
+
+/* ── Layout ── */
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-grow: 1;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--gap-lg);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  /* top clears the overlapping navbar */
+  padding: calc(var(--space-80px) + var(--section-py)) var(--gutter) var(--section-py);
+}
+
+.hero__copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--gap-md);
+  min-width: 0;
+  max-width: var(--size-1200px);
+}
+
+/* ── Eyebrow pill ── */
+.hero__eyebrow {
+  display: flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-10px);
+  padding: var(--space-8px) var(--space-16px) var(--space-8px) var(--space-10px);
+  border: var(--size-1px) solid var(--glass-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  font: var(--text-eyebrow);
+  font-weight: 500;
+  letter-spacing: var(--size-1px);
+  color: var(--color-text-soft);
+}
+
+.hero__eyebrow-dot {
+  flex: none;
+  width: var(--space-8px);
+  height: var(--space-8px);
+  border-radius: var(--radius-pill);
+  background: var(--color-gold);
+  box-shadow: 0 0 var(--space-12px) var(--color-gold);
+}
+
+/* ── Lead + CTAs ── */
+.hero__lead {
+  max-width: var(--hero-size-620px);
+  font: var(--text-lead); /* 300 · fs-lead 16 → 18 → 18 → 18 → 22 */
+  color: var(--color-text-lead);
+}
+
+.hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-14px);
+  padding-top: var(--space-8px);
+}
+
+.hero__cta {
+  flex: 1 1 auto;
+  max-width: var(--hero-size-324px);
+}
+
+/* ── Slider dots (≤ 768) ── */
+.hero__dots {
+  display: var(--hero-dots-display);
+  align-items: center;
+  gap: var(--space-8px);
+  padding-top: var(--space-8px);
+}
+
+.hero__dot {
+  width: var(--hero-size-6px);
+  height: var(--hero-size-6px);
+  border-radius: var(--radius-pill);
+  background: var(--hero-dot-fill);
+}
+
+.hero__dot--active {
+  width: var(--size-28px);
+  background: var(--color-gold);
+}
+
+/* ── Aside (desktop) ── */
+.hero__aside {
+  position: relative;
+  display: var(--hero-aside-display);
+  flex: 0 0 var(--size-360px);
+  flex-direction: column;
+  gap: var(--space-16px);
+}
+
+.hero__ring {
+  position: absolute;
+  top: calc(-1 * var(--hero-space-90px));
+  right: calc(-1 * var(--space-40px));
+  width: var(--hero-size-220px);
+  height: var(--hero-size-220px);
+  border: var(--size-2px) solid var(--hero-ring-color);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 var(--space-40px) var(--hero-ring-glow);
+  transform: perspective(600px) rotateX(68deg) rotateZ(20deg);
+  pointer-events: none;
+}
+
+.hero__stat {
+  position: relative; /* paints above the ring even when the float transform is off */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14px);
+  animation: hero-float 7s ease-in-out infinite;
+}
+
+.hero__stat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero__stat-label {
+  font-size: var(--size-13px);
+  color: var(--color-text-lead);
+}
+
+.hero__badge {
+  padding: var(--space-6px) var(--space-10px);
+  border-radius: var(--radius-pill);
+  background: var(--hero-badge-fill);
+  font-size: var(--size-12px);
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+.hero__stat-value {
+  font: var(--text-stat); /* Anton · fs-stat 40 → 56 → 56 → 60 → 80 */
+}
+
+.hero__stat-suffix {
+  color: var(--color-gold);
+}
+
+.hero__avatars {
+  display: flex;
+}
+
+.hero__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* reference is 36 content-box + 2×2 border = 40 rendered */
+  width: var(--size-40px);
+  height: var(--size-40px);
+  margin-right: calc(-1 * var(--space-8px));
+  border: var(--size-2px) solid var(--color-navy-900);
+  border-radius: var(--radius-pill);
+  font-size: var(--size-12px);
+  font-weight: 700;
+}
+
+.hero__avatar:nth-child(1) {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+.hero__avatar:nth-child(2) {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.hero__avatar:nth-child(3) {
+  background: var(--color-white);
+  color: var(--color-ink);
+}
+
+.hero__avatar:nth-child(4) {
+  background: var(--color-gold-lo);
+  color: var(--color-ink);
+}
+
+.hero__avatar:nth-child(5) {
+  background: var(--color-navy-900);
+  color: var(--color-gold);
+}
+
+.hero__feature {
+  --icon-tile: var(--size-48px); /* reference: 48px tile in this card */
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-14px);
+  margin-left: var(--space-40px);
+  padding: var(--space-18px) var(--space-20px);
+  border: var(--size-1px) solid var(--glass-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--glass-fill-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.hero__feature-title {
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+.hero__feature-text {
+  font-size: var(--size-13px);
+  color: var(--color-text-lead);
+}
+
+/* ── Slider controls ── */
+.hero__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12px);
+  padding-top: var(--space-8px);
+}
+
+.hero__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-48px);
+  height: var(--size-48px);
+  border: var(--size-1px) solid var(--glass-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.hero__arrow--next {
+  border-color: transparent;
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+.hero__arrow:focus-visible {
+  outline: var(--size-2px) solid var(--color-gold-hi);
+  outline-offset: var(--space-4px);
+}
+
+.hero__arrow-icon {
+  width: var(--size-18px);
+  height: var(--size-18px);
+}
+
+.hero__counter {
+  margin-left: var(--space-8px);
+  font-size: var(--size-14px);
+  font-weight: 600;
+}
+
+.hero__counter-total {
+  color: var(--color-placeholder);
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-1 * var(--space-14px)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__stat {
+    animation: none;
+  }
+}

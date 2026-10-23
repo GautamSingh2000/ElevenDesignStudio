@@ -1,0 +1,244 @@
+/*
+ * NavBar — reference 01-header--1920/1440/768/430 + eleven-design-studio-v2-responsive.html.
+ * The reference bar is the same size at 1920 and 1440 (fixed 10/24 padding, 44px logo,
+ * 32px nav gap), so those tiers use plain tokens. Two tiers are fluid:
+ *   ≤ 1280  nav gap + bar gap shrink linearly so the nav still fits at 769px
+ *           (the nav only hides at ≤ 768). Positive-slope calc, same recipe as the
+ *           negative-slope rule in responsive-tokens.md:
+ *             nav gap  8 @768 → 32 @1280: slope 24/512 = 4.6875vw, intercept 8 − 36 = −28px
+ *             bar gap 12 @768 → 24 @1280: slope 12/512 = 2.3438vw, intercept 12 − 18 = −6px
+ *   ≤ 430   logo, start padding and gaps scale 0 → 430 so the bar fits at 375.
+ *   bar height  1920 74 → 1440 72 → 1280 72 → 768 72 → 430 70 (floor 66 = 44 CTA + 2×10 + 2×1)
+ *               = sm Button height + 2×10 padding + 2×1 border; the header pulls the hero
+ *               up by top padding + bar height so the hero image runs behind it.
+ * Burger stays 44px at every width (touch target).
+ */
+.navbar {
+  --navbar-size-74px: 4.625rem; /* 74px */
+  --navbar-size-72px: 4.5rem; /* 72px */
+  --navbar-size-70px: 4.375rem; /* 70px */
+  --navbar-size-66px: 4.125rem; /* 66px */
+  --navbar-bar-fill: color-mix(in srgb, var(--color-bg) 45%, transparent); /* rgba(11,14,42,0.45) */
+  --navbar-drawer-fill: color-mix(in srgb, var(--color-bg) 90%, transparent); /* legible over the hero */
+
+  /* ── > 1440 · 1440 → 1920 ── */
+  --navbar-bar-height: clamp(var(--navbar-size-72px), calc(74 / 1920 * 100vw), var(--navbar-size-74px)); /* 72→74 */
+  --navbar-gap: var(--space-24px); /* 24→24 — logo ↔ nav ↔ actions */
+  --navbar-nav-gap: var(--space-32px); /* 32→32 */
+  --navbar-pad-start: var(--space-24px); /* 24→24 — bar left padding */
+  --navbar-logo-height: var(--size-44px); /* 44→44 */
+  --navbar-actions-gap: var(--space-8px); /* 8→8 — CTA ↔ burger */
+
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  margin-bottom: calc(-1 * (var(--space-16px) + var(--navbar-bar-height)));
+  padding: var(--space-16px) var(--gutter) 0;
+  pointer-events: none; /* the transparent gutters must not block the hero */
+}
+
+.navbar__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--navbar-gap);
+  max-width: var(--container-max);
+  min-height: var(--navbar-bar-height);
+  margin: 0 auto;
+  padding: var(--space-10px) var(--space-10px) var(--space-10px) var(--navbar-pad-start);
+  border: var(--size-1px) solid var(--glass-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--navbar-bar-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  pointer-events: auto;
+}
+
+.navbar__logo {
+  display: flex;
+  flex: none;
+}
+
+.navbar__logo-img {
+  width: auto;
+  height: var(--navbar-logo-height);
+}
+
+.navbar__nav {
+  display: var(--nav-display);
+  gap: var(--navbar-nav-gap);
+}
+
+.navbar__link,
+.navbar__link:hover {
+  padding-block: var(--space-10px);
+  font: var(--text-nav); /* 500 · fs-small 13 → 14 → 14 → 14 → 15 */
+  color: var(--color-white);
+  white-space: nowrap;
+  transition: color 0.2s ease-out;
+}
+
+.navbar__link:hover {
+  color: var(--color-gold);
+}
+
+.navbar__logo:focus-visible,
+.navbar__link:focus-visible,
+.navbar__burger:focus-visible,
+.navbar__drawer-link:focus-visible {
+  outline: var(--size-2px) solid var(--color-gold-hi);
+  outline-offset: var(--space-4px);
+}
+
+.navbar__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--navbar-actions-gap);
+}
+
+.navbar__burger {
+  display: var(--burger-display);
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-44px);
+  height: var(--size-44px);
+  border: var(--size-1px) solid var(--glass-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill-strong);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.navbar__burger-icon {
+  width: var(--size-20px);
+  height: var(--size-20px);
+}
+
+.navbar__burger-lines {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2; /* reference burger */
+  stroke-linecap: round;
+}
+
+/* ── Drawer (≤ 768): glass panel under the bar ── */
+.navbar__drawer {
+  display: none;
+  position: absolute;
+  top: calc(100% + var(--space-8px));
+  right: var(--gutter);
+  left: var(--gutter);
+  flex-direction: column;
+  padding: var(--space-8px) var(--card-pad);
+  border: var(--size-1px) solid var(--glass-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--navbar-drawer-fill);
+  box-shadow: var(--shadow-deep);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  pointer-events: auto;
+}
+
+.navbar__drawer--open {
+  display: var(--burger-display); /* never shows above 768, even if left open */
+}
+
+.navbar__drawer-link,
+.navbar__drawer-link:hover {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16px);
+  min-height: var(--size-44px);
+  padding-block: var(--space-14px);
+  color: var(--color-white);
+}
+
+.navbar__drawer-link + .navbar__drawer-link {
+  border-top: var(--size-1px) solid var(--glass-border);
+}
+
+.navbar__drawer-number {
+  flex: none;
+  min-width: var(--size-24px); /* labels line up whatever the digit widths */
+  font: var(--text-nav);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+.navbar__drawer-label {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--size-28px);
+  line-height: 1;
+  text-transform: uppercase;
+  transition: color 0.2s ease-out;
+}
+
+.navbar__drawer-link:hover .navbar__drawer-label {
+  color: var(--color-gold);
+}
+
+.navbar__drawer-arrow {
+  flex: none;
+  width: var(--size-20px);
+  height: var(--size-20px);
+  color: var(--color-gold);
+}
+
+/* ── ≤ 1440 · 1280 → 1440 ── */
+@media (max-width: 1440px) {
+  .navbar {
+    --navbar-bar-height: var(--navbar-size-72px); /* 72→72 */
+    --navbar-gap: var(--space-24px); /* 24→24 */
+    --navbar-nav-gap: var(--space-32px); /* 32→32 */
+    --navbar-pad-start: var(--space-24px); /* 24→24 */
+    --navbar-logo-height: var(--size-44px); /* 44→44 */
+    --navbar-actions-gap: var(--space-8px); /* 8→8 */
+  }
+}
+
+/* ── ≤ 1280 · 768 → 1280 ── */
+@media (max-width: 1280px) {
+  .navbar {
+    --navbar-bar-height: var(--navbar-size-72px); /* 72→72 */
+    --navbar-gap: clamp(var(--space-12px), calc(2.3438vw - 0.375rem), var(--space-24px)); /* 12→24 linear */
+    --navbar-nav-gap: clamp(var(--space-8px), calc(4.6875vw - 1.75rem), var(--space-32px)); /* 8→32 linear */
+    --navbar-pad-start: var(--space-24px); /* 24→24 */
+    --navbar-logo-height: var(--size-44px); /* 44→44 */
+    --navbar-actions-gap: var(--space-8px); /* 8→8 */
+  }
+}
+
+/* ── ≤ 768 (tablet) · 430 → 768 ── */
+@media (max-width: 768px) {
+  .navbar {
+    --navbar-bar-height: clamp(var(--navbar-size-70px), calc(72 / 768 * 100vw), var(--navbar-size-72px)); /* 70→72 */
+    --navbar-gap: var(--space-12px); /* 12→12 */
+    --navbar-nav-gap: var(--space-8px); /* 8→8 — nav hidden */
+    --navbar-pad-start: var(--space-24px); /* 24→24 */
+    --navbar-logo-height: var(--size-44px); /* 44→44 */
+    --navbar-actions-gap: var(--space-8px); /* 8→8 */
+  }
+}
+
+/* ── ≤ 430 (mobile) · 0 → 430 ── */
+@media (max-width: 430px) {
+  .navbar {
+    --navbar-bar-height: clamp(var(--navbar-size-66px), calc(70 / 430 * 100vw), var(--navbar-size-70px)); /* 66→70 — CTA floor */
+    --navbar-gap: clamp(0rem, calc(12 / 430 * 100vw), 0.75rem); /* 0→12 */
+    --navbar-nav-gap: clamp(0rem, calc(8 / 430 * 100vw), 0.5rem); /* 0→8 — nav hidden */
+    --navbar-pad-start: clamp(0rem, calc(24 / 430 * 100vw), 1.5rem); /* 0→24 */
+    --navbar-logo-height: clamp(0rem, calc(44 / 430 * 100vw), 2.75rem); /* 0→44 */
+    --navbar-actions-gap: clamp(0rem, calc(8 / 430 * 100vw), 0.5rem); /* 0→8 */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar__link,
+  .navbar__drawer-label {
+    transition: none;
+  }
+}

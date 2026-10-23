@@ -10,9 +10,9 @@ Never build more than the step you were asked for.
 | --- | --- |
 | Design tokens (colours, type, spacing, breakpoints) | `src/styles/theme.css` (copied from `handoff/theme.css`) |
 | All copy, links, image paths | `handoff/content.json` → `src/data/content.ts` |
-| Pixel reference per section × breakpoint | `handoff/reference/<NN-section>--<width>.png` (widths 1920, 1440, 768, 430) |
+| Pixel reference per section × breakpoint | `handoff/reference/<NN-section>--<width>.jpg` (widths 1920, 1440, 768, 430) |
 | Full working reference page | `handoff/reference/full-page.html` (open in a browser and resize) |
-| Full PDF of every breakpoint | `handoff/reference/Eleven-Design-Studio_V2_All-Breakpoints.pdf` |
+| Full PDF of every breakpoint | download separately (not in zip) |
 | Images | `public/images/*` |
 
 When a reference PNG and these rules disagree, follow the PNG for look and these rules for code.
@@ -42,24 +42,25 @@ src/
   styles/theme.css
 ```
 
-## Responsive rules (MUST follow — these are the team's conversion rules)
+## Responsive rules (MUST follow — team pattern)
 
-- Breakpoints: **desktop = base (no media query, design canvas 1920)**, `@media (max-width: 1440px)`,
-  `@media (max-width: 1280px)`, **tablet `@media (max-width: 768px)`**, **mobile `@media (max-width: 430px)`**.
-- Sizing uses **chained clamps**: desktop `clamp(<tab>, <px/1920*100>vw, <web>)`, tablet `clamp(<mob>, <px/768*100>vw, <tab>)`,
-  mobile only where needed with `/430`. Tablet denominator is **768**, mobile **430** — never 834/402 (those are only for `.fluid-responsive`).
-- Use the global tokens first (`--fs-*`, `--gutter`, `--section-py`, `--gap-*`, `--card-pad`, `--radius-*`, `--space-*px`, `--size-*px`).
-  Snap to the nearest token within ~2px. Only if nothing is close, create a LOCAL token on the component's BEM root:
-  `--<block>-space-<N>px: <rem>; /* Npx */`.
-- **Media queries are for structure only** (direction, columns, display, wrap). Sizes come from clamps.
-- Never write an inverted clamp (min > max). Values must be monotonic mobile ≤ tablet ≤ web; if not, use a hard switch
-  (<20px difference) or a negative-slope `calc()` with the formula documented in a comment.
-- Never reference an undefined custom property. Check `space` vs `size` and the `px` suffix on every `var()`.
-- Font-size clamps never have `0` as a minimum.
-- `top/left/right/bottom` only on positioned elements.
+- Breakpoints: base (> 1440), `@media (max-width: 1440px)`, `(max-width: 1280px)`, `(max-width: 768px)` tablet,
+  `(max-width: 430px)` mobile.
+- **Every fluid token is re-assigned in every breakpoint.** Each range scales from its lower frame to its upper frame:
+  `> 1440: 1440 → 1920` · `≤ 1440: 1280 → 1440` · `≤ 1280: 768 → 1280` · `≤ 768: 430 → 768` · `≤ 430: 0 → 430`.
+- Pattern: `clamp(<value at lower frame>, calc(<px at upper frame> / <upper frame width> * 100vw), <value at upper frame>)`.
+  The min of each range is the max of the next range down, so there is no jump at any breakpoint. Mobile ranges start at `0rem`.
+- Follow `src/styles/theme.css` exactly for this: it already has every global token in all 5 tiers.
+- New LOCAL tokens follow the same 5-tier pattern, declared on the component's BEM root block and re-assigned inside the same
+  media queries: `--<block>-space-<N>px` / `--<block>-size-<N>px`, rem value + px comment.
+- Use global tokens first (`--fs-*`, `--text-*` shorthands, `--gutter`, `--section-py`, `--gap-*`, `--card-pad`, `--radius-*`,
+  `--space-*px`, `--size-*px`); snap to the nearest token within ~2px.
+- **Media queries are for structure only** (direction, columns, display, wrap) — use the structure tokens in theme.css.
+- Never write an inverted clamp (min > max). Never reference an undefined custom property (check `space` vs `size`, `px` suffix).
+- `top/left/right/bottom` only on positioned elements; `margin-*` for flow spacing.
 - Images: `.fluid-responsive` with a **unitless** `--w`, no competing `width`, keep ratio with `aspect-ratio`.
 - BEM, kebab-case class names inside each module: `.about`, `.about__media`, `.about__point--active`.
-- Comment each fluid token with its endpoints: `/* tab 16px -> web 36px */`.
+- Comment each fluid token with its endpoints: `/* 106.67→120 */`.
 
 ## Visual language (do not drift)
 

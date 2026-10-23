@@ -7,6 +7,8 @@ type ButtonProps = {
   href: string;
   /** "gold": gradient pill, ink text (primary). "glass": frosted pill, white text. */
   variant?: "gold" | "glass";
+  /** "md": section CTAs (02-hero). "sm": header CTA (01-header) — fs-small, 14/24 padding. */
+  size?: "md" | "sm";
   /** Adds a trailing arrow icon. */
   arrow?: boolean;
   /** Stretch to the parent width. */
@@ -18,6 +20,7 @@ export default function Button({
   label,
   href,
   variant = "gold",
+  size = "md",
   arrow = false,
   fullWidth = false,
   className,
@@ -25,6 +28,7 @@ export default function Button({
   const classes = [
     styles.button,
     variant !== "gold" && styles[`button--${variant}`],
+    size !== "md" && styles[`button--${size}`],
     fullWidth && styles["button--full"],
     className,
   ]
