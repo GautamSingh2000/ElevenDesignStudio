@@ -1,18 +1,34 @@
 /*
  * Button — 1920 values from reference 02-hero CTAs / 10-contact submit (full-page.html).
- * Frames: 1440 = 0.75× and 1280 = 0.667× of 1920 (theme.css rule), 430 = mobile value,
- * 768 = on the line between 1280 and 430. Every tier is a chained clamp, so each value
- * scales with the viewport inside its own range and meets the next tier with no jump.
- *   padding-block   1920 18 → 1440 13.5 → 1280 12 → 768 10.8 → 430 10
+ * Built like Advotiq PrimaryCta: a <Link> with label + optional arrow spans, colours set
+ * per variant through --button-bg / --button-fg, and height, inline padding, radius, gap
+ * and icon as chained clamps, so each value scales inside its own range and meets the
+ * next tier with no jump.
+ *   height          1920 64 → 1440 52 → 1280 48 → 768 46 → 430 44
+ *                   (reference line box 18 + fs-body×1.5 + 18, rounded up to even;
+ *                    floors at 44px on mobile — touch target, never scales below it)
  *   padding-inline  1920 32 → 1440 24 → 1280 21.33 → 768 19.33 → 430 18
+ *   radius          1920 32 → 1440 26 → 1280 24 → 768 24 → 430 22  (½ height = pill)
  *   gap              1920 8 → 1440 6 → 1280 5.33 → 768 4.53 → 430 4
  *   arrow           1920 18 → 1440 13.5 → 1280 12 → 768 10.8 → 430 10
- * min-height stays 44px at every width (touch target); border + focus ring are hairlines.
+ * Height is fixed, so there is no block padding — flex centres the label.
+ * Border + focus ring are hairlines.
  */
 .button {
+  --button-bg: var(--gradient-gold);
+  --button-fg: var(--color-ink);
+  --button-border: transparent;
+  --button-shadow: var(--shadow-gold);
+  --button-weight: 600;
+
+  --button-size-64px: 4rem; /* 64px */
+  --button-size-32px: 2rem; /* 32px */
+  --button-size-26px: 1.625rem; /* 26px */
+
   /* ── > 1440 · 1440 → 1920 ── */
-  --button-padding-block: clamp(0.8438rem, calc(18 / 1920 * 100vw), 1.125rem); /* 13.5→18 */
+  --button-height: clamp(var(--size-52px), calc(64 / 1920 * 100vw), var(--button-size-64px)); /* 52→64 */
   --button-padding-inline: clamp(1.5rem, calc(32 / 1920 * 100vw), 2rem); /* 24→32 */
+  --button-radius: clamp(var(--button-size-26px), calc(32 / 1920 * 100vw), var(--button-size-32px)); /* 26→32 */
   --button-gap: clamp(0.375rem, calc(8 / 1920 * 100vw), 0.5rem); /* 6→8 — label ↔ arrow */
   --button-icon-size: clamp(0.8438rem, calc(18 / 1920 * 100vw), 1.125rem); /* 13.5→18 — arrow */
 
@@ -21,16 +37,17 @@
   justify-content: center;
   gap: var(--button-gap);
   box-sizing: border-box;
-  min-height: var(--size-44px); /* touch target */
-  padding: var(--button-padding-block) var(--button-padding-inline);
-  border: var(--size-1px) solid transparent;
-  border-radius: var(--radius-pill);
+  width: fit-content;
+  height: var(--button-height);
+  padding: 0 var(--button-padding-inline);
+  border: var(--size-1px) solid var(--button-border);
+  border-radius: var(--button-radius);
+  background: var(--button-bg);
+  box-shadow: var(--button-shadow);
+  color: var(--button-fg);
   font: var(--text-button); /* 600 · fs-body 15 → 16 → 16 → 16 → 18 */
-  line-height: 1.5; /* reference CTA line box (24px at 16px text) */
-  text-align: center;
+  font-weight: var(--button-weight);
   text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
 }
 
 .button:focus-visible {
@@ -38,34 +55,55 @@
   outline-offset: var(--space-4px);
 }
 
-.button--gold,
-.button--gold:hover {
-  background: var(--gradient-gold);
-  color: var(--color-ink);
-  box-shadow: var(--shadow-gold);
+.button__label {
+  white-space: nowrap;
 }
 
-.button--glass,
-.button--glass:hover {
-  border-color: var(--glass-border-strong);
-  background: var(--glass-fill);
-  color: var(--color-white);
-  font-weight: 500; /* reference: glass CTA is 500, gold is 600 */
+.button__arrow {
+  display: flex;
+  flex: none;
+  transition: translate 0.3s ease-out;
+}
+
+.button__icon {
+  width: var(--button-icon-size);
+  height: var(--button-icon-size);
+}
+
+/* ── Hover: arrow nudges right by one gap ── */
+.button:hover .button__arrow,
+.button:focus-visible .button__arrow {
+  translate: var(--button-gap) 0;
+}
+
+/* ── Variants ── */
+.button--glass {
+  --button-bg: var(--glass-fill);
+  --button-fg: var(--color-white);
+  --button-border: var(--glass-border-strong);
+  --button-shadow: none;
+  --button-weight: 500; /* reference: glass CTA is 500, gold is 600 */
+
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
 }
 
-.button__arrow {
-  flex: none;
-  width: var(--button-icon-size);
-  height: var(--button-icon-size);
+.button--full {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button__arrow {
+    transition: none;
+  }
 }
 
 /* ── ≤ 1440 · 1280 → 1440 ── */
 @media (max-width: 1440px) {
   .button {
-    --button-padding-block: clamp(0.75rem, calc(13.5 / 1440 * 100vw), 0.8438rem); /* 12→13.5 */
+    --button-height: clamp(var(--size-48px), calc(52 / 1440 * 100vw), var(--size-52px)); /* 48→52 */
     --button-padding-inline: clamp(1.3331rem, calc(24 / 1440 * 100vw), 1.5rem); /* 21.33→24 */
+    --button-radius: clamp(var(--size-24px), calc(26 / 1440 * 100vw), var(--button-size-26px)); /* 24→26 */
     --button-gap: clamp(0.3331rem, calc(6 / 1440 * 100vw), 0.375rem); /* 5.33→6 */
     --button-icon-size: clamp(0.75rem, calc(13.5 / 1440 * 100vw), 0.8438rem); /* 12→13.5 */
   }
@@ -74,8 +112,9 @@
 /* ── ≤ 1280 · 768 → 1280 ── */
 @media (max-width: 1280px) {
   .button {
-    --button-padding-block: clamp(0.675rem, calc(12 / 1280 * 100vw), 0.75rem); /* 10.8→12 */
+    --button-height: clamp(var(--size-46px), calc(48 / 1280 * 100vw), var(--size-48px)); /* 46→48 */
     --button-padding-inline: clamp(1.2081rem, calc(21.33 / 1280 * 100vw), 1.3331rem); /* 19.33→21.33 */
+    --button-radius: var(--size-24px); /* 24→24 */
     --button-gap: clamp(0.2831rem, calc(5.33 / 1280 * 100vw), 0.3331rem); /* 4.53→5.33 */
     --button-icon-size: clamp(0.675rem, calc(12 / 1280 * 100vw), 0.75rem); /* 10.8→12 */
   }
@@ -84,8 +123,9 @@
 /* ── ≤ 768 (tablet) · 430 → 768 ── */
 @media (max-width: 768px) {
   .button {
-    --button-padding-block: clamp(0.625rem, calc(10.8 / 768 * 100vw), 0.675rem); /* 10→10.8 */
+    --button-height: clamp(var(--size-44px), calc(46 / 768 * 100vw), var(--size-46px)); /* 44→46 */
     --button-padding-inline: clamp(1.125rem, calc(19.33 / 768 * 100vw), 1.2081rem); /* 18→19.33 */
+    --button-radius: clamp(var(--size-22px), calc(24 / 768 * 100vw), var(--size-24px)); /* 22→24 */
     --button-gap: clamp(0.25rem, calc(4.53 / 768 * 100vw), 0.2831rem); /* 4→4.53 */
     --button-icon-size: clamp(0.625rem, calc(10.8 / 768 * 100vw), 0.675rem); /* 10→10.8 */
   }
@@ -94,8 +134,9 @@
 /* ── ≤ 430 (mobile) · 0 → 430 ── */
 @media (max-width: 430px) {
   .button {
-    --button-padding-block: clamp(0rem, calc(10 / 430 * 100vw), 0.625rem); /* 0→10 */
+    --button-height: var(--size-44px); /* 44 — touch-target floor, does not scale down */
     --button-padding-inline: clamp(0rem, calc(18 / 430 * 100vw), 1.125rem); /* 0→18 */
+    --button-radius: var(--size-22px); /* 22 — ½ of the fixed 44 height */
     --button-gap: clamp(0rem, calc(4 / 430 * 100vw), 0.25rem); /* 0→4 */
     --button-icon-size: clamp(0rem, calc(10 / 430 * 100vw), 0.625rem); /* 0→10 */
   }

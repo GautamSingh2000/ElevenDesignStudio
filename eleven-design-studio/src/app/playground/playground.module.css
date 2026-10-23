@@ -64,3 +64,49 @@
   font: var(--text-small);
   opacity: 0.85;
 }
+
+/* Marquee demos — reference 03-marquee / 09-clients (real sections are steps 6 and 12) */
+.playground__strip {
+  padding-block: var(--space-16px);
+  background: var(--gradient-marquee);
+  box-shadow: var(--shadow-gold);
+}
+
+.playground__strip-word {
+  display: flex;
+  align-items: center;
+  gap: var(--space-40px);
+  padding-inline: var(--space-20px);
+  font: var(--text-marquee);
+  letter-spacing: var(--tracking-marquee);
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.playground__strip-star {
+  width: var(--size-18px);
+  height: var(--size-18px);
+  fill: currentColor;
+}
+
+.playground__pills {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14px);
+}
+
+.playground__pill-row {
+  --marquee-gap: var(--space-14px);
+}
+
+.playground__pill {
+  padding: var(--space-20px) var(--space-32px);
+  border: var(--size-1px) solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill);
+  font: var(--text-body);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-text-soft);
+  white-space: nowrap;
+}

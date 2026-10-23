@@ -1,0 +1,53 @@
+/*
+ * Marquee — infinite horizontal loop (reference 03-marquee strip, 09-clients rows).
+ * Structure only: no sizes of its own. The consumer sets --marquee-gap (space after
+ * each item) on `className`; --marquee-duration comes from the `speed` prop.
+ * The gap is padding on each item, not `gap` on the track, so both copies are exactly
+ * the same width and translateX(-50%) lands on the seam with no jump.
+ * Keyframes live here (not the global e11-marquee) because CSS Modules hash
+ * animation names.
+ */
+.marquee {
+  --marquee-gap: 0rem;
+  --marquee-duration: 30s;
+
+  display: flex;
+  overflow: hidden;
+}
+
+.marquee__track {
+  display: flex;
+  flex: none;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration) linear infinite;
+}
+
+.marquee--reverse .marquee__track {
+  animation-direction: reverse;
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__item {
+  display: flex;
+  flex: none;
+  padding-inline-end: var(--marquee-gap);
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}

@@ -5,6 +5,7 @@ import Container from '../components/ui/Container/Container';
 import Eyebrow from '../components/ui/Eyebrow/Eyebrow';
 import GlassCard from '../components/ui/GlassCard/GlassCard';
 import IconTile from '../components/ui/IconTile/IconTile';
+import Marquee from '../components/ui/Marquee/Marquee';
 import OutlineNumber from '../components/ui/OutlineNumber/OutlineNumber';
 import SectionTitle from '../components/ui/SectionTitle/SectionTitle';
 import { content } from '@/data/content';
@@ -13,8 +14,23 @@ import styles from './playground.module.css';
 export const metadata: Metadata = { title: 'Playground', robots: { index: false } };
 
 export default function Playground() {
-  const { services, hero, process, about, commitment } = content;
+  const { services, hero, process, about, commitment, clients } = content;
   const goldCard = commitment.cards[1];
+  const half = Math.ceil(clients.names.length / 2);
+  const toPills = (names: string[]) =>
+    names.map((name) => (
+      <span key={name} className={styles.playground__pill}>
+        {name}
+      </span>
+    ));
+  const stripWords = content.marquee.map((word) => (
+    <span key={word} className={styles['playground__strip-word']}>
+      {word}
+      <svg className={styles['playground__strip-star']} viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2l2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6z" />
+      </svg>
+    </span>
+  ));
 
   return (
     <main className={styles.playground}>
@@ -53,22 +69,16 @@ export default function Playground() {
       </Container>
 
       <Container className={styles.playground__stack}>
-        <p className={styles.playground__label}>Button — gold / glass links (02-hero), arrow, native buttons</p>
+        <p className={styles.playground__label}>Button — gold / glass links (02-hero), arrow, full width</p>
         <div className={styles.playground__row}>
-          <Button href={hero.ctaPrimary.href}>{hero.ctaPrimary.label}</Button>
-          <Button href={hero.ctaSecondary.href} variant="glass">
-            {hero.ctaSecondary.label}
-          </Button>
+          <Button label={hero.ctaPrimary.label} href={hero.ctaPrimary.href} />
+          <Button label={hero.ctaSecondary.label} href={hero.ctaSecondary.href} variant="glass" />
         </div>
         <div className={styles.playground__row}>
-          <Button href="#contact" arrow>
-            Submit a Brief
-          </Button>
-          <Button variant="glass" arrow>
-            Native &lt;button&gt;
-          </Button>
-          <Button type="submit">{content.contact.submit}</Button>
+          <Button label="Submit a Brief" href="#contact" arrow />
+          <Button label="Plan your stall" href="#contact" variant="glass" arrow />
         </div>
+        <Button label={content.contact.submit} href="#contact" arrow fullWidth />
       </Container>
 
       <Container className={styles.playground__stack}>
@@ -113,6 +123,35 @@ export default function Playground() {
           </GlassCard>
         </ul>
       </Container>
+
+      <div className={styles.playground__stack}>
+        <Container>
+          <p className={styles.playground__label}>Marquee — gold strip words, 28s (03-marquee)</p>
+        </Container>
+        <Marquee items={stripWords} speed={28} className={styles.playground__strip} />
+      </div>
+
+      <div className={styles.playground__stack}>
+        <Container>
+          <p className={styles.playground__label}>
+            Marquee — client pills, 50s + 60s reverse, labelled row 1 (09-clients). Hover to pause.
+          </p>
+        </Container>
+        <div className={styles.playground__pills}>
+          <Marquee
+            items={toPills(clients.names.slice(0, half))}
+            speed={50}
+            label="Our clients, part 1"
+            className={styles['playground__pill-row']}
+          />
+          <Marquee
+            items={toPills(clients.names.slice(half))}
+            speed={60}
+            reverse
+            className={styles['playground__pill-row']}
+          />
+        </div>
+      </div>
     </main>
   );
 }
